@@ -31,7 +31,7 @@ gameinfo
 map Outpost "UAC Outpost"
 {
 	levelnum = 999
-	sky1 = "SKY1"
+	sky1 = "O_SKY"
     sky2 = "RIFTSPAC"
 	music = "Outpost1"
 	nointermission
