@@ -760,6 +760,17 @@ flickerlight2 RADIATIONGLOW2
 object DRPGRadiationGlow    { frame TNT1 { light RADIATIONGLOW  } }
 object DRPGRadiationGlow2   { frame TNT1 { light RADIATIONGLOW2 } }
 
+// OUTPOST STUFF
+// --------------------------------------------------
+
+pulselight OUTPOSTALARM
+{
+	color 1.0 0.25 0.0
+	size 128
+	secondarySize 96
+	interval 0.4571428
+}
+
 // SHADERS
 // --------------------------------------------------
 

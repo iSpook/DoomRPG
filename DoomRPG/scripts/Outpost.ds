@@ -29,9 +29,10 @@ int MarineTID = 1400;
 int MarineMaxTID = 1419;
 int MarineBossTID = 1421;
 int TurretTID = 1450;
+int OutpostAlarmTID = 1600;
 int BossSpotTID = 1475;
 int ForcefieldID = 1500;
-int ForcefieldGeneratorID = 1501;
+int BlastDoorID = 1501;
 int GeneratorTID = 1510;
 int EntrySectorID = 200;
 int HallTeleportSpotID = 1601;
@@ -559,22 +560,14 @@ acscript void PissOffMarines(bool Steal)
     // Enrage placeholder bosses
     SetActorState(MarineBossTID - 1, "Enraged", false);
     
-    // Sector Lighting
-    for (int i = 0; i <= MAX_OUTPOST_ID; i++)
-    {
-        Sector_SetColor(i, 255, 0, 0, 0);
-        Light_Glow(i, 160, 192, 30);
-    };
-    
-    // Start the Alarm loop
-    AlarmLoop();
+    // You fool! You set off the alarms!
+    Thing_Activate(OutpostAlarmTID);
     
     // Boss Spawning
     SpawnBoss();
     
-    // Raise Entry Forcefield
-    Line_SetBlocking(ForcefieldGeneratorID, BLOCKF_EVERYTHING | BLOCKF_SIGHT | BLOCKF_HITSCAN, 0);
-    SetLineTexture(ForcefieldGeneratorID, SIDE_FRONT, TEXTURE_MIDDLE, "FORCEFIE");
+    // Seal off the lobby
+    Door_Close(BlastDoorID, 72);
     SpawnSpotForced("TeleportFog", GeneratorTID, 0, 0);
     SpawnSpotForced("DRPGForcefieldGenerator", GeneratorTID, GeneratorTID, 0);
     
@@ -627,9 +620,8 @@ acscript void PissOffMarines(bool Steal)
         {
             AmbientSound("misc/poweroff", 127);
             
-            // Disable Entry Forcefield
-            Line_SetBlocking(ForcefieldGeneratorID, 0, BLOCKF_EVERYTHING | BLOCKF_SIGHT | BLOCKF_HITSCAN);
-            SetLineTexture(ForcefieldGeneratorID, SIDE_FRONT, TEXTURE_MIDDLE, "");
+            // Re-open the lobby
+            Door_Open(BlastDoorID, 72);
             SetActorState(GeneratorTID, "Death", false);
             
             // Boss is dead
@@ -1580,17 +1572,6 @@ acscript void PowerOutage()
             Sector_SetColor(i, 255, 0, 0, 0);
             Light_Fade(i, 160, 60);
         };
-    };
-};
-
-acscript void AlarmLoop()
-{
-    while (true)
-    {
-        if ((Timer() % 30) == 0)
-            AmbientSound("misc/alarm", 127);
-        
-        Delay(1);
     };
 };
 

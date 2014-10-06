@@ -71,7 +71,6 @@ extern "ACS"
     script void MinigameHandler();
     script void OutpostSecret();
     script void PowerOutage();
-    script void AlarmLoop();
     script void PlaceBoss();
     script void SpawnBoss();
 };

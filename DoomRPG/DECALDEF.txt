@@ -1,0 +1,17 @@
+decal RecreationalAreaSign 256
+{
+    pic RecSign
+    shade "00 00 00"
+}
+
+decal MedicalBaySign 257
+{
+    pic MedSign
+    shade "00 00 00"
+}
+
+decal AdminSign 258
+{
+    pic AdmiSign
+    shade "00 00 00"
+}

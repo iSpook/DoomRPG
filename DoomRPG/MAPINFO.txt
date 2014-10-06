@@ -35,6 +35,9 @@ map Outpost "UAC Outpost"
     sky2 = "RIFTSPAC"
 	music = "Outpost1"
 	nointermission
+    smoothlighting
+    VertWallShade = 8
+    HorizWallShade = -8
 }
 
 // Rejigger the skills
