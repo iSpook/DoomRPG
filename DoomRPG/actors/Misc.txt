@@ -297,6 +297,114 @@ Actor DRPGOutpostLevelTransportParticle
     }
 }
 
+// Automap Markers
+
+Actor OutpostMarker : MapMarker
+{
+    Scale 0.25
+    RenderStyle Add
+}
+
+Actor OutpostMarker_ArmorPad : OutpostMarker 12000
+{
+    States
+    {
+    Spawn:
+        OMRK A -1
+        Stop
+    }
+}
+
+Actor OutpostMarker_AugBatteryPad : OutpostMarker 12001
+{
+    States
+    {
+    Spawn:
+        OMRK B -1
+        Stop
+    }
+}
+
+Actor OutpostMarker_EPPad : OutpostMarker 12002
+{
+    States
+    {
+    Spawn:
+        OMRK C -1
+        Stop
+    }
+}
+
+Actor OutpostMarker_HealthPad : OutpostMarker 12003
+{
+    States
+    {
+    Spawn:
+        OMRK D -1
+        Stop
+    }
+}
+
+Actor OutpostMarker_ItemLockers : OutpostMarker 12004
+{
+    States
+    {
+    Spawn:
+        OMRK E -1
+        Stop
+    }
+}
+
+Actor OutpostMarker_MissionBBS : OutpostMarker 12005
+{
+    States
+    {
+    Spawn:
+        OMRK F -1
+        Stop
+    }
+}
+
+Actor OutpostMarker_Shop : OutpostMarker 12006
+{
+    States
+    {
+    Spawn:
+        OMRK G -1
+        Stop
+    }
+}
+
+Actor OutpostMarker_LevelTransporter : OutpostMarker 12007
+{
+    States
+    {
+    Spawn:
+        OMRK H -1
+        Stop
+    }
+}
+
+Actor OutpostMarker_SkillComputer : OutpostMarker 12008
+{
+    States
+    {
+    Spawn:
+        OMRK I -1
+        Stop
+    }
+}
+
+Actor OutpostMarker_TokenConverter : OutpostMarker 12009
+{
+    States
+    {
+    Spawn:
+        OMRK J -1
+        Stop
+    }
+}
+
 // Misc hacky crap
 
 // Time Freeze for Menus
