@@ -1,3 +1,12 @@
+// Outpost Textures
+brightmap texture O_CMPBLU { map "brightmaps/doomrpg/outpost/O_CMP.png" }
+brightmap texture O_CMPBL2 { map "brightmaps/doomrpg/outpost/O_CMP.png" }
+brightmap texture O_CMPORA { map "brightmaps/doomrpg/outpost/O_CMP.png" }
+brightmap texture O_CMPOR2 { map "brightmaps/doomrpg/outpost/O_CMPOR2.png" }
+brightmap texture O_LITE01 { map "brightmaps/doomrpg/outpost/O_LITE01.png" }
+brightmap texture O_MISSIO { map "brightmaps/doomrpg/outpost/O_MISSIO.png" }
+brightmap texture O_WALL02 { map "brightmaps/doomrpg/outpost/O_WALL02.png" }
+
 // Health Items
 brightmap sprite MEDLA0 { map "brightmaps/doomrpg/MEDLA0.png" }
 brightmap sprite MEDXA0 { map "brightmaps/doomrpg/MEDXA0.png" }
