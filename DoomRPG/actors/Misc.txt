@@ -621,6 +621,16 @@ Actor OutpostMarker_TokenConverter : OutpostMarker 12009
     }
 }
 
+Actor OutpostMarker_GamesTable : OutpostMarker 12010
+{
+    States
+    {
+    Spawn:
+        OMRK K -1
+        Stop
+    }
+}
+
 // Misc hacky crap
 
 // Time Freeze for Menus
