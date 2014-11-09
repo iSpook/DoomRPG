@@ -2,6 +2,7 @@
 #define _RPG_DH_
 
 #include "Defs.dh"
+#include "Skills.dh" // For some reason, forward declaring SkillLevel causes incomplete type, have to include the header
 
 library("RPG");
 
@@ -9,10 +10,14 @@ library("RPG");
 struct ItemInfo;
 struct MonsterInfo;
 struct LootItem;
+struct ShieldPart;
+struct ShieldAccessory;
+// struct SkillLevelInfo;
 
 AddressSpaceDecl MapArray ItemSpace;
 AddressSpaceDecl MapArray LootSpace;
 AddressSpaceDecl MapArray MonsterSpace;
+AddressSpaceDecl MapArray ShieldSpace;
 
 struct MissionInfo
 {
@@ -56,7 +61,6 @@ struct PlayerData
     int Luck;           // Increases drop chances
     int ActualHealth;   // The player's real, actual Health
     int HealthMax;      // Max player Health
-    int ArmorMax;       // Max Armor that the player's current armor can go up to
     
     // Stat Bonuses
     int StrengthBonus;
@@ -79,6 +83,7 @@ struct PlayerData
     fixed DamageFactor;         // General damage the player will defend against
     int Mass;                   // Player mass, for preventing knockback
     fixed StatusEffectResist;   // Chance to resist a status effect
+    int AuraRange;              // The reach of your auras to affect other players
     int ToxicityRegenBonus;     // Speed at which Toxicity dissipates over time
     fixed Speed;                // Movement Speed
     fixed JumpHeight;           // Jump Height
@@ -145,7 +150,10 @@ struct PlayerData
     int ShopPage;
     
     // Skill Info
+    SkillLevelInfo[MAX_CATEGORIES][MAX_SKILLS] SkillLevel;
     bool[AURA_MAX] Aura;
+    bool TeamAura;
+    int[AURA_MAX] AuraLevel;
     int AuraTimer;
     bool AuraBonus;
     fixed AuraCostMult;
@@ -199,7 +207,7 @@ struct PlayerData
     bool AutosaveTimerReset;
     
     // Associated Drops
-    int[MAX_DROPS] DropTID;
+    DynamicArray DropTID;
     
     // Structception
     struct
@@ -215,15 +223,15 @@ struct PlayerData
     struct
     {
         // Current Parts
-        int Body;
-        int Battery;
-        int Capacitor;
-        int Accessory;
+        ShieldPart ShieldSpace *Body;
+        ShieldPart ShieldSpace *Battery;
+        ShieldPart ShieldSpace *Capacitor;
+        ShieldAccessory ShieldSpace *Accessory;
         
         // Flags
         bool Active;
         bool Full;
-
+        
         // Stats
         int Charge;
         int Capacity;
@@ -233,12 +241,9 @@ struct PlayerData
         int Timer;
         
         // Accessories
-        bool LightAmp;
-        bool Invisibility;
-        bool Ghost;
-        bool TimeFreezer;
-        int GhostTimer;
-        int TimeFreezerTimer;
+        int AccessoryBattery;
+        int AccessoryTimer;
+        Position AccessoryPosition;
     } Shield;
     
     struct
@@ -259,6 +264,55 @@ struct PlayerData
         int Timer;
         int TimerMax;
     } Stim;
+    
+    struct
+    {
+        // Flags
+        bool Init;
+        bool Active;
+        bool MenuOpen;
+        
+        // TID
+        int TID;
+        
+        // Stats
+        int Level;
+        int Threat;
+        int Strength;
+        int Defense;
+        int Vitality;
+        int Energy;
+        int Regeneration;
+        int Agility;
+        int Capacity;
+        int Luck;
+        
+        // Aura
+        int Aura;
+        int AuraTimer;
+        
+        // Battery
+        int Battery;
+        int BatteryMax;
+        
+        // Ammo
+        int Clip;
+        int ClipMax;
+        int Shell;
+        int ShellMax;
+        int Rocket;
+        int RocketMax;
+        int Plasma;
+        int PlasmaMax;
+        
+        // Timers
+        int RefitTimer;
+        
+        // Offsets
+        fixed AngleOffset;
+        fixed LookAngleOffset;
+        fixed DistanceOffset;
+    } Turret;
     
     MissionInfo Mission;
 };
@@ -281,29 +335,17 @@ extern
     // --------------------------------------------------
     // Multiplayer HUD
     // 
-
-    // HUD Combo
-    variable GlobalArray(20) int[MAX_PLAYERS] Combo @ 0;
-    variable GlobalArray(22) int[MAX_PLAYERS] BonusGained @ 0;
-    variable GlobalArray(23) int[MAX_PLAYERS] XPGained @ 0;
-    variable GlobalArray(24) int[MAX_PLAYERS] RankGained @ 0;
-
+    
     // HUD Timers
     variable GlobalArray(26) int[MAX_PLAYERS] RegenBoostTimerHUD @ 0;
-    variable GlobalArray(42) int[MAX_PLAYERS] StimTimerHUD @ 0;
-
+    
     // HUD Item Counts
     variable GlobalArray(18) int[MAX_PLAYERS] Credits @ 0;
     variable GlobalArray(19) int[MAX_PLAYERS] Continues @ 0;
-
-    // Max Health and Armor
-    variable GlobalArray(39) int[MAX_PLAYERS] HealthMax @ 0;
-    variable GlobalArray(40) int[MAX_PLAYERS] ArmorMax @ 0;
-
+    
     // Energy Points (EP)
     variable GlobalArray(2)  int[MAX_PLAYERS] EP @ 0;
-    variable GlobalArray(3)  int[MAX_PLAYERS] EPMax @ 0;
-
+    
     // Shield
     variable GlobalArray(50) int[MAX_PLAYERS] Shield @ 0;
     variable GlobalArray(51) int[MAX_PLAYERS] ShieldCapacity @ 0;

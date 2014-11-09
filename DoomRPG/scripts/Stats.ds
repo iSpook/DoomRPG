@@ -23,7 +23,7 @@ static long int[MAX_RANK] RankTable;
 // Rank strings
 static str[MAX_RANK + 1] Ranks =
 {
-    "None";
+    "Rec";
     "Pvt"; "Pvt +";
     "PFC"; "PFC +";
     "LCpl"; "LCpl +";
@@ -40,7 +40,7 @@ static str[MAX_RANK + 1] Ranks =
 
 static str[MAX_RANK + 1] LongRanks =
 {
-    "None";
+    "Recruit";
     "Private"; "Private +";
     "Private First Class"; "Private First Class +";
     "Lance Corporal"; "Lance Corporal +";
@@ -122,7 +122,7 @@ acscript void AddXP(int PlayerNum, long int XP, long int Rank, bool Reduced)
         {
             if (Players(PlayerNum).AuraTimer > 0)
                 Players(PlayerNum).Combo++;
-            if (Skills[2][2].CurrentLevel >= 3 && XP > 0 && Rank > 0)
+            if (Player.SkillLevel[2][2].CurrentLevel >= 3 && XP > 0 && Rank > 0)
                 Players(PlayerNum).BonusGained += XP + Rank;
         };
     }
@@ -391,36 +391,6 @@ function void CheckHealth()
     };
 };
 
-function void CheckArmorMax()
-{
-    int PlayerNum = PlayerNumber();
-    
-    if (!GetArmorType("none", PlayerNum))                       Player.ArmorMax = 0;
-    if (GetArmorType("DRPGArmorBonus", PlayerNum) > 0)          Player.ArmorMax = 100;
-    if (GetArmorType("DRPGUsedGreenArmor", PlayerNum) > 0)      Player.ArmorMax = 50;
-    if (GetArmorType("DRPGGreenArmor", PlayerNum) > 0)          Player.ArmorMax = 100;
-    if (GetArmorType("DRPGUsedBlueArmor", PlayerNum) > 0)       Player.ArmorMax = 50;
-    if (GetArmorType("DRPGBlueArmor", PlayerNum) > 0)           Player.ArmorMax = 100;
-    if (GetArmorType("DRPGUsedYellowArmor", PlayerNum) > 0)     Player.ArmorMax = 100;
-    if (GetArmorType("DRPGYellowArmor", PlayerNum) > 0)         Player.ArmorMax = 200;
-    if (GetArmorType("DRPGUsedRedArmor", PlayerNum) > 0)        Player.ArmorMax = 100;
-    if (GetArmorType("DRPGRedArmor", PlayerNum) > 0)            Player.ArmorMax = 200;
-    if (GetArmorType("DRPGUsedWhiteArmor", PlayerNum) > 0)      Player.ArmorMax = 100;
-    if (GetArmorType("DRPGWhiteArmor", PlayerNum) > 0)          Player.ArmorMax = 200;
-    
-    // DoomRL Compatibility
-    if (GetCVar("drpg_ext_doomrl"))
-    {
-        if (CheckInventory("RL100ArmorWorn"))               Player.ArmorMax = 100;
-        if (CheckInventory("RL150ArmorWorn"))               Player.ArmorMax = 150;
-        if (CheckInventory("RL200ArmorWorn"))               Player.ArmorMax = 200;
-        if (CheckInventory("RL100RegenArmorWorn"))          Player.ArmorMax = 100;
-        
-        // Nano Ablative Armor is special and shit
-        if (CheckInventory("RLNanoAblativeArmorToken"))     Player.ArmorMax = 200;
-    };
-};
-
 function void CheckStats()
 {
     // VERY IMPORTANT CODE RIGHT HERE
@@ -433,6 +403,7 @@ function void CheckStats()
     Player.HealthMax = Player.Vitality * 10;
     Player.StatusEffectResist = Player.Vitality / 4.0;
     Player.EPMax = Player.Energy * 10;
+    Player.AuraRange = Player.Energy * 16;
     Player.ToxicityRegenBonus = Player.Regeneration / 10;
     Player.Speed = 1.0 + 0.25 * ((fixed)Player.Agility / 100);
     Player.JumpHeight = 8.0 + (8.0 * ((fixed)Player.Agility / 100));
@@ -507,6 +478,7 @@ function void DoRegen()
 {
     int HPAmount = 1;
     int EPAmount = 1;
+    int Overflow = 0;
     
     // HP Regen
     if (Player.HPRate >= Player.HPTime && ClassifyActor(Player.TID) & ACTOR_ALIVE)
@@ -516,9 +488,19 @@ function void DoRegen()
     if (Player.EPRate >= Player.EPTime && Player.EP < Player.EPMax)
     {
         Player.EP += Player.EPAmount;
+        Overflow = 0;
         
         if (Player.EP > Player.EPMax)
+        {
+            Overflow = Player.EP - Player.EPMax;
             Player.EP = Player.EPMax;
+        };
+        
+        if (Player.Shield.Active && Player.Shield.Accessory && Player.Shield.Accessory->PassiveEffect == SHIELD_PASS_EPOVERFLOW)
+        {
+            HealThing(Overflow);
+            Player.Shield.Charge += Overflow;
+        };
     };
     
     // Check and Reset timers
@@ -551,18 +533,22 @@ function void DoRegen()
             Thing_ChangeTID(AuraTID, 0);
         };
         
-        // Regeneration Perk - Exponentially increase Health/Energy regeneration rates as they lower
+        // Regeneration Perk - Exponentially increase Health/Energy regeneration rates up to 4x as they lower
         if (Player.Perks[STAT_REGENERATION])
         {
             // Health
-            int Health = Player.ActualHealth;
-            if (Health == 0) Health = 1;
-            HPAmount = 1 + (Player.HealthMax / Health);
+            fixed Health = Player.ActualHealth;
+            fixed MaxHealth = Player.HealthMax;
+            
+            fixed Multiplier = (1.0 - (Health / MaxHealth)) * 1.7325;
+            HPAmount += Multiplier * Multiplier;
             
             // EP
-            int EP = Player.EP;
-            if (EP == 0) EP = 1;
-            EPAmount = Abs(1 + (Player.EPMax / EP));
+            fixed EP = Abs(Player.EP);
+            fixed MaxEP = Player.EPMax;
+            
+            fixed Multiplier = (1.0 - (EP / MaxEP)) * 1.7325;
+            EPAmount += Multiplier * Multiplier;
         };
         
         // Movement/Crouching/Idling mechanics
@@ -669,7 +655,7 @@ function void CheckStatBounds()
         Player.WeaponSpeed = 100;
     
     // Cap Survival Bonus
-    if (Player.SurvivalBonus > 75)
+    if (Player.SurvivalBonus > 75 && (!Player.Shield.Accessory || Player.Shield.Accessory->PassiveEffect != SHIELD_PASS_ROULETTE))
         Player.SurvivalBonus = 75;
     
     // Cap chances at 100%
@@ -681,6 +667,7 @@ function void CheckStatBounds()
     if (Player.TokenChance > 100)   Player.TokenChance = 100;
     if (Player.AugChance > 100)     Player.AugChance = 100;
     if (Player.ShieldChance > 100)  Player.ShieldChance = 100;
+    if (Player.StimChance > 100)    Player.StimChance = 100;
 
     // Speed capping CVAR
     if (Player.Speed > GetCVarFixed("drpg_maxspeed"))
@@ -694,15 +681,15 @@ function void CheckStatBounds()
 // Luck Chances
 function void CheckLuck()
 {
-    Player.HealthChance = Player.Luck * 0.025;
-    Player.EPChance = Player.Luck * 0.025;
-    Player.ArmorChance = Player.Luck * 0.025;
-    Player.PowerupChance = Player.Luck * 0.0125;
-    Player.WeaponChance = Player.Luck * 0.0125;
-    Player.TokenChance = Player.Luck * 0.01;
-    Player.AugChance = Player.Luck * 0.0025;
-    Player.ShieldChance = Player.Luck * 0.005;
-    Player.StimChance = Player.Luck * 0.0125;
+    Player.HealthChance = Player.Luck * LUCK_HEALTHCHANCE;
+    Player.EPChance = Player.Luck * LUCK_EPCHANCE;
+    Player.ArmorChance = Player.Luck * LUCK_ARMORCHANCE;
+    Player.PowerupChance = Player.Luck * LUCK_POWERUPCHANCE;
+    Player.WeaponChance = Player.Luck * LUCK_WEAPONCHANCE;
+    Player.TokenChance = Player.Luck * LUCK_TOKENCHANCE;
+    Player.AugChance = Player.Luck * LUCK_AUGCHANCE;
+    Player.ShieldChance = Player.Luck * LUCK_SHIELDCHANCE;
+    Player.StimChance = Player.Luck * LUCK_STIMCHANCE;
 };
 
 function void CheckBurnout()
@@ -769,7 +756,7 @@ function void CheckPerks()
         Player.DamageFactor *= DefensePercent;
     
     // Vitality Perk - Halve Health regeneration time
-    if (Player.Perks[STAT_VITALITY])
+    if (Player.Perks[STAT_VITALITY] && Player.ActualHealth < Player.HealthMax / 10 + 1)
         Player.HPTime /= 2;
     
     // Agility Perk
@@ -847,7 +834,7 @@ function void CheckToxicity()
 function void ToxicityDamage()
 {
     // Check Damage Type for Toxicity
-    if (Player.DamageType == DT_TOXIC && !CheckInventory("PowerIronFeet") && !(Player.Shield.Accessory == SHIELD_ACC_TXBGONN && Player.Shield.Active))
+    if (Player.DamageType == DT_TOXIC && !CheckInventory("PowerIronFeet") && !(Player.Shield.Accessory && Player.Shield.Accessory->PassiveEffect == SHIELD_PASS_NOTOXIC && Player.Shield.Active))
         AddToxicity(Random(1, GameSkill()));
 };
 
@@ -958,7 +945,7 @@ function void CheckStatusEffects()
             if (Player.ActualHealth - Player.StatusIntensity[SE_POISON] > 0)
             {
                 Player.ActualHealth -= Player.StatusIntensity[SE_POISON];
-                FadeRange(255, 0, 0, 0.25, 255, 0, 0, 0.0, Player.StatusIntensity[SE_POISON] * 0.25);
+                FadeRange(0, 255, 0, 0.25, 0, 255, 0, 0.0, Player.StatusIntensity[SE_POISON] * 0.25);
             };
     
     if (Player.StatusType[SE_CORROSION]) // Corrosion

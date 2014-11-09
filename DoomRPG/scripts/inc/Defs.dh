@@ -3,6 +3,8 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
+#include <z_zone.h>
 #include <ds_def.h>
 
 #include <zcommon.acs>
@@ -29,8 +31,7 @@
 // Struct Aliases
 #define Players(N)              _PlayerData[(N)]
 #define Player                  _PlayerData[PlayerNumber()]
-#define Skill(N)                _SkillData[(N)]
-#define Skills                  _SkillData[PlayerNumber()]
+#define Skills                  SkillData // Temporary until I'm not lazy
 
 // Deunderscoreification
 #define HudMessage              __printf<__printf_hud>
@@ -73,7 +74,9 @@
 #endif
 
 // Create a dynamic HUD ID given 4 words
-#define MAKE_ID(a, b, c, d)	    ((DWORD)((a) | ((b) << 8) | ((c) << 16) | ((d) << 24)
+#define MAKE_ID(a, b, c, d)	    ((int)((a) | ((b) << 8) | ((c) << 16) | ((d) << 24)))
+
+#define BLANKDYNAMICARRAY {{'\x00';'\x00';'\x00';'\x00';'\x00';};0;0;0;nullptr;}
 
 // --------------------------------------------------
 // Arena
@@ -139,6 +142,36 @@ enum ECategoryFlags
 
 #define MAP_EXIT_SCRIPTNUM      30000
 
+enum EMapEvents
+{
+    MAPEVENT_NONE,
+    
+    MAPEVENT_MEGABOSS,
+    MAPEVENT_TOXICHAZARD,
+    MAPEVENT_NUCLEARBOMB,
+    MAPEVENT_LOWPOWER,
+    MAPEVENT_ALLAURAS,
+    MAPEVENT_ONEMONSTER,
+    
+    MAPEVENT_BONUS_RAINBOWS,
+    
+    MAPEVENT_DRLA_NIGHTMARE,
+    MAPEVENT_DRLA_TECHNOPHOBIA,
+    MAPEVENT_DRLA_ARMAGEDDON,
+    
+    MAPEVENT_MAX
+};
+
+enum EUACOutpostEvents
+{
+    UACEVENT_NONE,
+    
+    UACEVENT_INVASION,
+    UACEVENT_LOWPOWER,
+    
+    UACEVENT_MAX
+};
+
 // --------------------------------------------------
 // Menu
 // 
@@ -202,6 +235,7 @@ enum EMissionTypes
 #define MAX_DEF_MONSTERS        17
 #define MAX_DEF_MONSTERS_DRLA   46
 #define MAX_HUMANS              19
+#define MAX_MEGABOSSES          2
 
 enum EMonsterFlags
 {
@@ -264,7 +298,7 @@ enum EMonsterStatFlags
 // Password
 // 
 
-#define PW_VERSION              9
+#define PW_VERSION              11
 #define PW_SIZE                 50
 #define PW_COMPAT_SIZE          16
 #define PW_MAX_ASSEMBLIES       34
@@ -299,7 +333,6 @@ enum EDamageNumberTypes
 
 #define ASAVE_SAFETIME          20 * 35
 #define ASAVE_RETRYTIME         5 * 35
-#define MAX_DROPS               65535
 
 enum EDamageTypes
 {
@@ -309,7 +342,7 @@ enum EDamageTypes
     DT_MELEE,
     DT_FIRE,
     DT_PLASMA,
-    DT_LIGHTNING
+    DT_LIGHTNING,
 };
 
 // --------------------------------------------------
@@ -317,40 +350,28 @@ enum EDamageTypes
 // 
 
 #define SHIELD_HEALTH           1000000
-#define MAX_PARTS               29
+#define MAX_PARTS               22
+//#define MAX_ACCESSORIES         66
+#define MAX_ACCESSORIES         59
 
-enum EShieldAccessory
+enum EShieldPassive
 {
-    SHIELD_ACC_NONE,
-    SHIELD_ACC_X7,
-    SHIELD_ACC_SGENX5B,
-    SHIELD_ACC_AMP3000,
-    SHIELD_ACC_HRYVP80,
-    SHIELD_ACC_DEF2,
-    SHIELD_ACC_B1ZUT3,
-    SHIELD_ACC_CNVRT99,
-    SHIELD_ACC_REKT50,
-    SHIELD_ACC_UW0T,
-    SHIELD_ACC_CU256,
-    SHIELD_ACC_TXBGONN,
-    SHIELD_ACC_WRP30LITE,
-    SHIELD_ACC_NOVA2,
-    SHIELD_ACC_LZY200,
-    SHIELD_ACC_BST700,
-    SHIELD_ACC_PHD88,
-    SHIELD_ACC_BATTB,
-    SHIELD_ACC_SHVRZ7,
-    SHIELD_ACC_MM12,
-    SHIELD_ACC_MRTEKRAR,
-    SHIELD_ACC_SP00K,
-    SHIELD_ACC_RRG0,
-    SHIELD_ACC_E1NT31,
-    SHIELD_ACC_PATR0T,
-    SHIELD_ACC_RNJSUS2,
-    SHIELD_ACC_PWAA9001,
-    SHIELD_ACC_AWG01,
-    SHIELD_ACC_SCLAR53,
-    SHIELD_ACC_RFCT
+    SHIELD_PASS_NONE,
+    SHIELD_PASS_KILLSCHARGE,
+    SHIELD_PASS_AUGSLOT,
+    SHIELD_PASS_HYPERION,
+    SHIELD_PASS_AVENGER,
+    SHIELD_PASS_EPICMEGACASH,
+    SHIELD_PASS_SURVIVECHARGE,
+    SHIELD_PASS_SKILLPLUS,
+    SHIELD_PASS_NOTOXIC,
+    SHIELD_PASS_FRIENDSHIPISDEFENSE,
+    SHIELD_PASS_ROULETTE,
+    SHIELD_PASS_DOSHMAGNET,
+    SHIELD_PASS_MORESKILLS,
+    SHIELD_PASS_SKILLTOSHIELD,
+    SHIELD_PASS_EPOVERFLOW,
+    SHIELD_PASS_MAX
 };
 
 // --------------------------------------------------
@@ -402,6 +423,16 @@ enum ESoulTypes
 #define COMBO_STOP              (35 * 2)
 #define CONFUSION_ID            75000
 #define CONFUSION_NONSENSE_ID   60000
+
+#define LUCK_HEALTHCHANCE       0.025
+#define LUCK_EPCHANCE           0.025
+#define LUCK_ARMORCHANCE        0.025
+#define LUCK_POWERUPCHANCE      0.0125
+#define LUCK_WEAPONCHANCE       0.0125
+#define LUCK_TOKENCHANCE        0.01
+#define LUCK_AUGCHANCE          0.0025
+#define LUCK_SHIELDCHANCE       0.005
+#define LUCK_STIMCHANCE         0.0125
 
 enum EStatTypes
 {
@@ -460,6 +491,18 @@ enum EStimCompounds
 };
 
 // --------------------------------------------------
+// Turret
+// 
+
+enum ETurretPages
+{
+    TURRETPAGE_MAIN,
+    TURRETPAGE_UPGRADE,
+    TURRETPAGE_MOVE,
+    TURRETPAGE_MAX
+};
+
+// --------------------------------------------------
 // Utils
 // 
 
@@ -468,6 +511,14 @@ enum EStimCompounds
 #define BATTERY_ID              11200
 #define IG_STORE                0
 #define IG_LOCKER               1
+
+enum EAmmoTypes
+{
+    AMMO_CLIP = 1,
+    AMMO_SHELL,
+    AMMO_ROCKET,
+    AMMO_CELL
+};
 
 enum EKeyStates
 {
@@ -483,6 +534,29 @@ enum ELogLevels
     LOG_DEBUG,
     LOG_WARNING,
     LOG_ERROR
+};
+
+// --------------------------------------------------
+// Common Structures
+// 
+// These have to be here to prevent complaining about incomplete types
+
+struct DynamicArray
+{
+    char[5] Name;
+    int Position;
+    int Size;
+    int ItemSize;
+    void *Data;
+};
+
+struct Position
+{
+    fixed X;
+    fixed Y;
+    fixed Z;
+    fixed Angle;
+    fixed Pitch;
 };
 
 #endif

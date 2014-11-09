@@ -23,6 +23,8 @@ extern
 
 extern "ACS"
 {
+    script int GetUniqueTID();
+    script int GetAmmoMax(int);
     script void SoulEffect(int);
     script void PlayerTeleport(int);
     script void DestroyImmunity();
@@ -35,7 +37,7 @@ extern "ACS"
     script int GetTimer();
     script void SetSkill(int);
     script void Respec(bool, bool) net;
-    script void AddEP(int);
+    script void AddEP(int, bool);
     script void RemoveEP(int, int = 0);
     script int GetEP();
     script int GetEPMax();
@@ -100,8 +102,16 @@ extern
     function bool DropPlayerItem(str);
     function int DropMonsterItem(int, int, str, int, fixed = 0.0, fixed = 0.0, fixed = 0.0);
     function bool HaveStatusEffect();
+    function int FindPlayerID(int);
     function bool CheckInput(int, int = KEY_PRESSED);
     function void LogMessage(str, int = LOG_NORMAL);
+    function int CalcPercent(int, int);
+    
+    // Dynamic Arrays
+    function void ArrayCreate(DynamicArray *, char[5], int, int);
+    function void ArrayResize(DynamicArray *);
+    function void ArrayDestroy(DynamicArray *);
+    function void ArrayDump(DynamicArray *);
 };
 
 #endif

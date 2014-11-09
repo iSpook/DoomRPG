@@ -1,6 +1,8 @@
 #ifndef _MAP_DH_
 #define _MAP_DH_
 
+#include "Monsters.dh"
+
 struct LevelInfo
 {
     int LevelNum;
@@ -11,13 +13,18 @@ struct LevelInfo
     str NiceName;
     
     int MaxMonstersKilled;
+    int MaxTotalMonsters;
+    int MaxMonsterPercentage;
     int MaxItemsFound;
+    int MaxTotalItems;
+    int MaxItemPercentage;
     int MaxSecretsFound;
+    int MaxTotalSecrets;
+    int MaxSecretPercentage;
     int ShortestTime;
     
-    int TotalMonsters;
-    int TotalItems;
-    int TotalSecrets;
+    int UniqueSecrets;
+    
     int Par;
     int Sucks;
     
@@ -26,20 +33,46 @@ struct LevelInfo
     bool SecretsBonus;
     bool AllBonus;
     bool ParBonus;
+    
+    // Event stuff
+    unsigned int Event;
+    MonsterInfoPtr SelectedMonster;
+};
+
+struct DRLAEventMonsterReplacement
+{
+    str SourceMonster;
+    str DestMonster;
 };
 
 extern
 {
     variable static LevelInfo *CurrentLevel;
-    variable static LevelInfo *KnownLevels;
-    variable static int NumKnownLevels;
+    variable static DynamicArray KnownLevels;
     variable static int LastVisitedLevel;
+    variable static int AllBonusMaps;
+    
+    variable static DRLAEventMonsterReplacement[] NightmareReplacements;
+    variable static DRLAEventMonsterReplacement[] TechnoReplacements;
+    variable static DRLAEventMonsterReplacement[] ArmageddonReplacements;
 };
 
 extern
 {
     script void MapInit() open;
     script void MapLoop();
+    script void CalculateBonusMaps();
+    script void DecideMapEvent();
+    script void SetupMapEvent();
+    script void SetupOutpostEvent();
+
+    // Events
+    script void MegaBossEvent();
+    script void EnvironmentalHazard();
+    script void ThermonuclearBomb();
+    script void OneMonsterEvent();
+    script void RainbowSectors();
+    script void DRLAReplaceMonsters(DRLAEventMonsterReplacement *, str);
 };
 
 extern "ACS"

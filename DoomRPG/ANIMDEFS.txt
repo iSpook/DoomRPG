@@ -13,64 +13,52 @@ texture PLAYA1
 	pic PLAYD1 tics 6
 
 // Stat Token
-texture TOKAA0
-	pic TOKAA0 tics 2
-	pic TOKAB0 tics 2
-	pic TOKAC0 tics 2
-	pic TOKAD0 tics 2
-	pic TOKAE0 tics 2
-	pic TOKAF0 tics 2
-	pic TOKAG0 tics 2
-	pic TOKAH0 tics 2
+texture TOKEN1
+	pic TOKEN1A tics 4
+	pic TOKEN1B tics 4
+	pic TOKEN1C tics 4
+	pic TOKEN1D tics 4
+	pic TOKEN1E tics 4
+	pic TOKEN1F tics 4
 
 // Stat Cap Token
-texture TOKBA0
-	pic TOKBA0 tics 2
-	pic TOKBB0 tics 2
-	pic TOKBC0 tics 2
-	pic TOKBD0 tics 2
-	pic TOKBE0 tics 2
-	pic TOKBF0 tics 2
-	pic TOKBG0 tics 2
-	pic TOKBH0 tics 2
+texture TOKEN2
+	pic TOKEN2A tics 4
+	pic TOKEN2B tics 4
+	pic TOKEN2C tics 4
+	pic TOKEN2D tics 4
+	pic TOKEN2E tics 4
+	pic TOKEN2F tics 4
 
 // Skill Cap Token
-texture TOKCA0
-	pic TOKCA0 tics 2
-	pic TOKCB0 tics 2
-	pic TOKCC0 tics 2
-	pic TOKCD0 tics 2
-	pic TOKCE0 tics 2
-	pic TOKCF0 tics 2
-	pic TOKCG0 tics 2
-	pic TOKCH0 tics 2
+texture TOKEN3
+	pic TOKEN3A tics 4
+	pic TOKEN3B tics 4
+	pic TOKEN3C tics 4
+	pic TOKEN3D tics 4
+	pic TOKEN3E tics 4
+	pic TOKEN3F tics 4
 
 // Mega Token
-texture TOKDA0
-	pic TOKAA0 tics 2
-	pic TOKAB0 tics 2
-	pic TOKAC0 tics 2
-	pic TOKAD0 tics 2
-	pic TOKAE0 tics 2
-	pic TOKAF0 tics 2
-	pic TOKAG0 tics 2
-	pic TOKAH0 tics 2
-	pic TOKBA0 tics 2
-	pic TOKBB0 tics 2
-	pic TOKBC0 tics 2
-	pic TOKBD0 tics 2
-	pic TOKBE0 tics 2
-	pic TOKBF0 tics 2
-	pic TOKBG0 tics 2
-	pic TOKBH0 tics 2
-	pic TOKCA0 tics 2
-	pic TOKCB0 tics 2
-	pic TOKCC0 tics 2
-	pic TOKCD0 tics 2
-	pic TOKCE0 tics 2
-	pic TOKCF0 tics 2
-	pic TOKCG0 tics 2
-	pic TOKCH0 tics 2
+texture TOKEN4
+	pic TOKEN1A tics 2
+	pic TOKEN2A tics 2
+	pic TOKEN3A tics 2
+	pic TOKEN1B tics 2
+	pic TOKEN2B tics 2
+	pic TOKEN3B tics 2
+	pic TOKEN1C tics 2
+	pic TOKEN2C tics 2
+	pic TOKEN3C tics 2
+	pic TOKEN1D tics 2
+	pic TOKEN2D tics 2
+	pic TOKEN3D tics 2
+	pic TOKEN1E tics 2
+	pic TOKEN2E tics 2
+	pic TOKEN3E tics 2
+	pic TOKEN1F tics 2
+	pic TOKEN2F tics 2
+	pic TOKEN3F tics 2
 
 // Surgery Kit
 texture MEDSA0
@@ -119,6 +107,31 @@ texture ARM4A0
 texture ARM5A0
     pic ARM5A0 tics 6
     pic ARM5B0 tics 6
+
+// Reinforced Green Armor
+texture ARX1A0
+    pic ARX1A0 tics 6
+    pic ARX1B0 tics 6
+
+// Reinforced Blue Armor
+texture ARX2A0
+    pic ARX2A0 tics 6
+    pic ARX2B0 tics 6
+
+// Reinforced Yellow Armor
+texture ARX3A0
+    pic ARX3A0 tics 6
+    pic ARX3B0 tics 6
+
+// Reinforced Red Armor
+texture ARX4A0
+    pic ARX4A0 tics 6
+    pic ARX4B0 tics 6
+
+// Reinforced White Armor
+texture ARX5A0
+    pic ARX5A0 tics 6
+    pic ARX5B0 tics 6
 
 // Invulnerability Charge
 texture CRG2A0
@@ -268,6 +281,31 @@ texture ARM4
 texture ARM5
 	pic ARM5 tics 6
 	pic ARM5U tics 6
+
+// Reinforced Green Armor
+texture ARX1
+	pic ARX1 tics 6
+	pic ARX1U tics 6
+
+// Reinforced Blue Armor
+texture ARX2
+	pic ARX2 tics 6
+	pic ARX2U tics 6
+
+// Reinforced Yellow Armor
+texture ARX3
+	pic ARX3 tics 6
+	pic ARX3U tics 6
+
+// Reinforced Red Armor
+texture ARX4
+	pic ARX4 tics 6
+	pic ARX4U tics 6
+
+// Reinforced White Armor
+texture ARX5
+	pic ARX5 tics 6
+	pic ARX5U tics 6
 
 // Invulnerability Sphere
 texture PINV

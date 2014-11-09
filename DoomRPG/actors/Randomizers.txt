@@ -158,6 +158,7 @@ actor DRPGShieldDropper : RandomSpawner 20010
     DropItem "DRPGShieldCapacitor15"    255 1
     
     // Accessories
+    // TODO: Add the missing ones and also redistribute the weightings to not be shit
     DropItem "DRPGShieldAccessory1"     255 29
     DropItem "DRPGShieldAccessory2"     255 28
     DropItem "DRPGShieldAccessory3"     255 27
@@ -237,6 +238,11 @@ actor DRPGVialDropperRare : RandomSpawner 20013
     DropItem "DRPGVialMagnetic"
 }
 
+actor DRPGTurretDropper : RandomSpawner 20014
+{
+    DropItem "DRPGPortableTurretPickup"
+}
+
 // MARINES
 // --------------------------------------------------
 
@@ -254,6 +260,7 @@ actor DRPGDeadMarineDropper : RandomSpawner
     DropItem "DRPGShieldDropper"                64 1
     DropItem "DRPGStimDropper"                  64 1
     DropItem "DRPGVialDropper"                  64 5
+    DropItem "DRPGTurretDropper"                128 1
 }
 
 actor DRPGMarineOutpostSpawner : RandomSpawner 11010
@@ -331,25 +338,31 @@ actor DRPGSoulSphereRandomizer : RandomSpawner Replaces Soulsphere
 // Armor Bonus
 actor DRPGArmorBonusRandomizer : RandomSpawner Replaces ArmorBonus
 {
-    DropItem "DRPGArmorBonus"   255 90
-    DropItem "BatteryDropper"   255 7
-    DropItem "VialDropper"      255 3
+    DropItem "DRPGArmorBonus"               255 90
+    DropItem "BatteryDropper"               255 7
+    DropItem "VialDropper"                  255 3
 }
 
 // Green Armor Locations
 actor DRPGGreenArmorRandomizer : RandomSpawner Replaces GreenArmor
 {
-    DropItem "DRPGGreenArmor"   255 50
-    DropItem "DRPGBlueArmor"    255 40
-    DropItem "DRPGYellowArmor"  255 10
+    DropItem "DRPGGreenArmor"               255 50
+    DropItem "DRPGReinforcedGreenArmor"     255 10
+    DropItem "DRPGBlueArmor"                255 40
+    DropItem "DRPGReinforcedBlueArmor"      255 5
+    DropItem "DRPGYellowArmor"              255 10
+    DropItem "DRPGReinforcedYellowArmor"    255 1
 }
 
 // Blue Armor Locations
 actor DRPGBlueArmorRandomizer : RandomSpawner Replaces BlueArmor
 {
-    DropItem "DRPGYellowArmor"  255 75
-    DropItem "DRPGRedArmor"     255 20
-    DropItem "DRPGWhiteArmor"   255 5
+    DropItem "DRPGYellowArmor"              255 75
+    DropItem "DRPGReinforcedYellowArmor"    255 20
+    DropItem "DRPGRedArmor"                 255 20
+    DropItem "DRPGReinforcedRedArmor"       255 5
+    DropItem "DRPGWhiteArmor"               255 5
+    DropItem "DRPGReinforcedWhiteArmor"     255 1
 }
 
 // POWERUPS
