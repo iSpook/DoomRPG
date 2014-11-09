@@ -58,3 +58,17 @@ actor DRPGDeadMarine : DeadMarine Replaces DeadMarine
     }
 }
 
+// Outpost Decorations
+actor OutpostAdminLamp 12100
+{
+    +Solid
+    Height 48
+    Radius 12
+    
+    States
+    {
+    Spawn:
+        COLU B -1 Light("OutpostLamp1")
+        Stop
+    }
+}
